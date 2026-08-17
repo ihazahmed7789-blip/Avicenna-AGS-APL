@@ -65,8 +65,8 @@ async function start() {
     await sequelize.sync({ alter: true });
     console.log("Models synced.");
 
-    app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));
-    initWhatsApp();
+app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));
+// WhatsApp is initialized on demand from the admin WhatsApp page.
   } catch (err) {
     console.error("Failed to start server:", err.message);
     process.exit(1);
