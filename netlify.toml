@@ -1,0 +1,13 @@
+Your-Repository/
+│
+├── netlify.toml        ← YAHAN banana hai
+│
+├── frontend/
+│   ├── package.json
+│   ├── src/
+│   ├── public/
+│   └── ...
+│
+└── backend/
+    ├── package.json
+    └── ...
