@@ -2,7 +2,7 @@ import axios from "axios";
 
 // In Codespaces/Vite development, use the same-origin /api path and let Vite
 // proxy it to the backend. This avoids localhost/public-port mismatches.
-const API_BASE = import.meta.env.VITE_API_URL || "/api";
+const API_BASE = "https://avicenna-ags-apl-production.up.railway.app/api";
 
 const api = axios.create({
   baseURL: API_BASE,
