@@ -18,7 +18,10 @@ const classRoutes = require("./routes/classRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const frontdeskRoutes = require("./routes/frontdeskRoutes");
 const recruitmentRoutes = require("./routes/recruitmentRoutes");
-const academicRoutes = require("./routes/academicRoutes");
+const recognitionRoutes = require("./routes/recognitionRoutes");
+const timetableRoutes = require("./routes/timetableRoutes");
+const datesheetRoutes = require("./routes/datesheetRoutes");
+const certificateRoutes = require("./routes/certificateRoutes");
 
 const app = express();
 app.use(cors());
@@ -37,38 +40,39 @@ app.use("/api/classes", classRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/frontdesk", frontdeskRoutes);
 app.use("/api/recruitment", recruitmentRoutes);
-app.use("/api/academic", academicRoutes);
+app.use("/api/recognitions", recognitionRoutes);
+app.use("/api/timetable", timetableRoutes);
+app.use("/api/datesheet", datesheetRoutes);
+app.use("/api/certificates", certificateRoutes);
 
-app.get("/", (req, res) => res.json({ name: "School Management System API", status: "ok", health: "/api/health" }));
 app.get("/api/health", (req, res) => res.json({ status: "ok" }));
 
 const PORT = process.env.PORT || 5000;
 
 async function start() {
   try {
-    let connected = false;
-    let lastError;
-    for (let attempt = 1; attempt <= 10; attempt += 1) {
-      try {
-        await sequelize.authenticate();
-        connected = true;
-        console.log("Database connected.");
-        break;
-      } catch (err) {
-        lastError = err;
-        console.warn(`Database connection attempt ${attempt}/10 failed: ${err.message}`);
-        await new Promise((resolve) => setTimeout(resolve, Math.min(3000 * attempt, 15000)));
-      }
-    }
-    if (!connected) throw lastError || new Error("Database connection failed");
+    console.log("Attempting DB connection with:", {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      database: process.env.DB_NAME,
+      user: process.env.DB_USER,
+      ssl: process.env.DB_SSL,
+    });
 
+    await sequelize.authenticate();
+    console.log("Database connected.");
+
+    // In production use migrations instead of sync({ alter: true }).
     await sequelize.sync({ alter: true });
     console.log("Models synced.");
 
-app.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}`));
-// initWhatsApp();
+    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+    // WhatsApp client starts in the background; scan the QR from the
+    // admin panel's WhatsApp tab the first time it runs.
+    initWhatsApp();
   } catch (err) {
-    console.error("Failed to start server:", err.message);
+    console.error("Failed to start server. Full error:", err);
     process.exit(1);
   }
 }
